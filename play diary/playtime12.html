@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RK800</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+        }
+    
+        nav {
+            background-color: #d79fed;
+            color: ba55d3;
+            padding: 1em 0;
+            text-align: center;
+        }
+    
+        nav a {
+            color: rgb(255, 255, 255);
+            font-weight: normal;
+            padding: 10px 20px;
+            text-decoration: none;
+            transition: background-color 0.3s ease, font-weight 0.3s ease;
+            border-radius: 50px;
+            margin: 0 10px;
+        }
+    
+        nav a:hover {
+            background-color: #d79fed;
+            font-weight: bold;
+            border-radius: 0px;
+        }
+    
+        /* Main Content */
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 20px;
+            justify-content: space-between;
+        }
+    
+        .content {
+            flex: 3;
+            padding-right: 20px;
+        }
+    
+        /* Category Box Styles */
+        .category {
+            background-color: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+    
+        .category h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+    
+        .category ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+    
+        .category ul li {
+            margin: 10px 0;
+        }
+    
+        /* Category Links */
+        .category ul li a {
+            text-decoration: none;
+            color: #4e6177; /* 기본 링크 색 */
+            font-size: 16px;
+        }
+
+        /* 링크 클릭 시 텍스트 색 변경 */
+        .category ul li a:active,
+        .category ul li a:focus {
+            color: #41b7b1; 
+        }
+    
+        /* Content Area */
+        .content {
+            margin-right: 270px;
+            padding: 20px;
+        }
+    
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                padding: 10px;
+            }
+    
+            .content {
+                margin-right: 0;
+            }
+        }
+    </style>
+    
+<body>
+<!-- 이하의 내용은 그대로 붙여 넣으세요. -->
+<script>
+    (function () {
+        //=================================================================================
+        // 우클릭, 드래그, 복사 차단
+        //=================================================================================
+        var events = ["contextmenu", "selectstart", "dragstart", "copy", "cut"];
+
+        events.forEach(function (event) {
+            window.addEventListener(event, blockEvent, true);
+        })
+
+        function blockEvent(e) { e.preventDefault(); }
+        //=================================================================================
+        // 개발자 메뉴 (F12) 차단
+        //=================================================================================
+        window.addEventListener('keydown', blockDeveloperMenu, true);
+
+        function blockDeveloperMenu(e) {
+            if (e.keyCode === 123) { // F12
+                blockEvent(e);
+            }
+            if (e.ctrlKey && e.shiftKey) {
+                var code = e.keyCode;
+                // 개발자 도구를 여는 Ctrl + Shift + 키 조합
+                if (code === 67 || code === 69 || code === 73 || code === 74 || code === 75 || code === 77 || code === 83) {
+                    blockEvent(e);
+                }
+            }
+        }
+
+        setInterval(function () { debugger; }, 200);
+        //=================================================================================
+        // 애드온 (pig toolbox 등) 차단
+        //=================================================================================
+        var event, received = false;
+
+        refreshEvent();
+
+        window.addEventListener("contextmenu", function (e) {
+            if (e === event) { received = true; }
+        }, true);
+
+        setInterval(function () {
+            received = false;
+            window.dispatchEvent(event);
+            received ? hideMessage() : showMessage();
+            refreshEvent();
+        }, 200);
+
+        function refreshEvent() {
+            if (event && !event.cancelBubble) { return; }
+            event = document.createEvent("MouseEvents");
+            event.initMouseEvent("contextmenu", true, true, window, 1, 50, 121, 50, 50, false, false, false, false, 2, null);
+        }
+        //=================================================================================
+        // 자바스크립트 비활성화 (Disable Javascript) 시 메세지 띄우기
+        //=================================================================================
+        var timer = null;
+        function showMessage() {
+            clearInterval(timer); timer = null;
+        }
+        function hideMessage() {
+            if (timer === null) { timer = setInterval(reveal, 450); }
+        }
+        function reveal() {
+            cl().toggle("cm-hide");
+            cl().toggle("cm-hide-2");
+        }
+        function cl() { return Copyright_Message.classList; }
+
+        window.addEventListener('visibilitychange', function() {
+            // 페이지가 숨겨질 시 animation을 정지함
+            if (document.visibilityState === "hidden") {
+                cl().remove("cm-hide", "cm-hide-2");
+                void Copyright_Message.offsetWidth;
+                showMessage();
+            } else {
+                cl().add("cm-hide");
+                cl().remove("cm-hide-2");
+                hideMessage();
+            }
+        }, true);
+
+        hideMessage();
+    })();
+</script>
+<!---------------------------------------------------------------
+    자바스크립트 비활성화 후 새로고침 시 메세지 띄우기
+---------------------------------------------------------------->
+<noscript>
+    <style>
+        #Copyright_Message>span { display: none; }
+        .cm-no-js { background: white; visibility: visible!important; }
+    </style>
+</noscript>
+<!---------------------------------------------------------------
+    드래그 차단
+---------------------------------------------------------------->
+<style>
+    *:not(input):not(textarea):not(code):not(blockquote):not(pre) {
+        user-select: none !important;
+        -webkit-user-select: none !important;
+        -webkit-touch-callout: none !important;
+    }
+</style>
+<!-- 저작권 메세지 CSS -->
+<style>
+    .cm-overlay {
+        height: 100%;
+        width: 100%;
+        position: fixed;
+        left: 0;
+        top: 0;
+        overflow-x: hidden;
+        z-index: 2147483647;
+    }
+
+    #Copyright_Message, .cm-no-js { visibility: hidden; }
+
+    #Copyright_Message.cm-hide {
+        animation: 1s cm-reveal 500ms forwards;
+    }
+    #Copyright_Message.cm-hide-2 {
+        animation: 1s cm-reveal-2 500ms forwards;
+    }
+
+    @keyframes cm-reveal {
+        from { opacity: 0; visibility: visible; }
+        to { opacity: 1; visibility: visible; }
+    }
+    @keyframes cm-reveal-2 {
+        from { opacity: 0; visibility: visible; }
+        to { opacity: 1; visibility: visible; }
+    }
+
+    @media print { noscript { display: none; } }
+</style>
+
+    <!---------------------------------------------------------------
+    저작권 안내 메세지, <span> 내의 글을 원하는 대로 수정하세요.
+---------------------------------------------------------------->
+<div>
+    <div class="cm-overlay cm-no-js"></div>
+    <div id="Copyright_Message" class="cm-overlay cm-hide">
+        <span>
+            복제를 금지하는 사이트에서 콘텐츠를 복사해 사용하려 하고 있습니다. <br>
+            이 콘텐츠를 블로그나 웹사이트의 콘텐츠로 사용하면 저작권 문제로 처벌 받을 수 있습니다.
+        </span>
+        <noscript class="cm-no-js">
+            <!-- 자바스크립트 비활성화 시에 보여지는 메세지 -->
+            <span>
+                이 페이지를 보기 위해서는 자바스크립트가 필요합니다. <br>
+                사이트 설정에서 자바스크립트를 사용하도록 설정해주세요.
+            </span>
+        </noscript>
+    </div>
+    <!---------------------------------------------------------------
+        아래 CSS를 수정하여 메세지의 스타일을 변경하세요.
+    ---------------------------------------------------------------->
+    <style>
+        #Copyright_Message span {
+            font-size: 15px;
+            font-family: sans-serif;
+            position: fixed;
+            width: 500px;
+            max-width: 90%;
+            top: 50%;
+            left: 50%;
+            margin-left: -250px;
+            margin-top: -100px;
+
+            border-radius: 10px;
+            box-shadow: 0px 0px 34px 2px rgba(242, 191, 191, 1);
+            padding: 10px 10px 10px 35px;
+
+            line-height: 1.5;
+            color: #555;
+
+            background: #ffecec url('https://tistory4.daumcdn.net/tistory/770263/skin/images/warning.png') no-repeat 10px 50%;
+            border: 1px solid #f5aca6;
+        }
+    </style>
+</div>
+    
+    <!-- Navigation -->
+    <nav>
+        <a href="https://rkpop0815.github.io/RK800/" style="text-decoration: none; color: rgb(255, 255, 255); font-weight: normal;" onmouseover="this.style.fontWeight='bold';" onmouseout="this.style.fontWeight='normal';">HOME</a>
+        <a href="https://rkpop0815.github.io/RK800/novelposthome.html" style="text-decoration: none; color: rgb(255, 255, 255); font-weight: normal;" onmouseover="this.style.fontWeight='bold';" onmouseout="this.style.fontWeight='normal';">NOV</a>
+        <a href="https://rkpop0815.github.io/RK800/arthome.html" style="text-decoration: none; color: rgb(255, 255, 255); font-weight: normal;" onmouseover="this.style.fontWeight='bold';" onmouseout="this.style.fontWeight='normal';">PIC</a>
+        <a href="https://rkpop0815.github.io/RK800/dbhposthome.html" style="text-decoration: none; color: rgb(255, 255, 255); font-weight: normal;" onmouseover="this.style.fontWeight='bold';" onmouseout="this.style.fontWeight='normal';">DBH play diary</a>
+        <a href="https://x.com/rk800_380815" target="_blank" style="text-decoration: none; color: rgb(255, 255, 255); font-weight: normal;" onmouseover="this.style.fontWeight='bold';" onmouseout="this.style.fontWeight='normal';">SNS</a>
+    </nav>
+
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="content">
+            <!-- 게시글 내용 -->
+            <div class="category">
+                <h2>디트로이트 비컴 휴먼 12회차 플레이 후기</h2>
+                <h4>날짜: 2025.05.31 - 2025.06.06</h4>
+                <p>
+
+                    요새는 며칠에 걸쳐 몇 챕터씩 조금씩 플레이 중.<br>
+                    아무래도 같은 장면을 12번째 보는 데다 썩 좋은 엔딩을 보는 게 아니라 그런 듯. 그리고 허리가 실시간으로 아직나더라(...)<br>
+                    당연히 게임을 억지로 할 이유는 없으니, 필요시 이전처럼 디트로이트 전투 부분만 반복해서 가지를 치는 것도 괜찮다고 생각 중이다.<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_01.jpg" width="1000"><br>
+                    물고기 관찰 후 이 어항을 왜 볼 수 있게 해놨나 궁금했는데 총 때문에 어항에 금 간 거 이제 알았다. 맨날 물고기만 보느라...(´ω｀*)<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_02.gif" width="500"><br>
+                    (아마) 군인 한 명 만이 코너가 앞에 서면 총구를 내린다. 안드로이드에게 조금은 호의적인 사람일까...?<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_03_1.jpg" width="1000"><br>
+                    <img src="images/12_03_2.jpg" width="495"> <img src="images/12_03_3.jpg" width="495"><br>
+                    엠마와 존 태블릿 조사를 안 하면, 다니엘에게 이름을 물어보고 엠마와 대화를 한다.<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_04_1.jpg" width="495"> <img src="images/12_04_2.jpg" width="495"><br>
+                    러닝하는 사람과 안드로이드는, 마커스가 걸을 때 입구를 쳐다보며 걸으면 끝까지 안 나온다.<br>
+                    다른 데 쳐다봤다가 다시 보니 그 때 등장<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_05.jpg" width="1000"><br>
+                    미스터 핫도그씨 세 번째부터는 앞에 서있어도 뭐라 안 한다. 포기한 걸까ㅋㅋㅋㅋ<br>
+                    그런데 카라는 토드가 화내면 접근 금지 딱 뜨던데 마커스는 그런 게 없나?<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_06.jpg" width="1000"><br>
+                    테이블 빙글빙글 혼자 잘 노는 앨리스 ٩◔̯◔۶<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_07.jpg" width="1000"><br>
+                    마커스 피아노▶희망 하면 디비휴 오프닝 노래 나온다 넘 좋음... 나중에 천천히 속도 조절하면서 연주해보면 넘 좋을 거 같아...<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_08.jpg" width="1000"><br>
+                    피해자를 안드로이드라고 생각해 답변을 자주 잘못 고르는데, 그럴 때마다 행크가 노려본다.<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_09.jpg" width="1000"><br>
+                    불 안 켜니까 꼽주는 토드 ㄱㅡ<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_10_1.jpg" width="495"> <img src="images/12_10_2.jpg" width="495"><br>
+                    아니 개빈 일 안 하네ㅋㅋㅋㅋㅋ 잠깐 일하는 척 하는데 3초도 안 가는 듯ㅋㅋㅋㅋ<br>
+                    ◀n년차                                                                                 신입▶ <br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_11.jpg" width="1000"><br>
+                    이거 심문 때 일 고맙다는 선택지 영원히 잠겨있는 거라던데 아니 찍었으면 버그를 고쳐서 저희에게 보여줘야할 거 아닙니까?! (＃－.－)<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_12.jpg" width="1000"><br>
+                    와이어커터를 얻지 않으면 무조건 조사를 편의점 앞에서 시작하나? 편의점 들르지도 않았는데 여기있네.<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_13.jpg" width="1000"><br>
+                    총 없으면 협박 선택지는 없을 줄 알았는데 칼로 협박하는구나...<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_14_1.jpg" width="495"> <img src="images/12_14_2.jpg" width="495"><br>
+                    볼 때마다 좋은 장면... 이게 츤데레지예.<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_15.jpg" width="1000"><br>
+                    추후 봐야하는 장면있어서... 오랜만에 쓴소리 듣는데 가슴이 아프구만.<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_16.jpg" width="1000"><br>
+                    이거 대화 끝나고도 계속 들락날락 할 수 있네<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_17.jpg" width="1000"><br>
+                    증맬 잡겠다는 의지 1도 없고요? (・∀・)?<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_18.jpg" width="1000"><br>
+                    스모 사료 봉투 뜯어먹은거 아이가...?<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_19.jpg" width="1000"><br>
+                    에덴클럽 진짜 큰 사업이긴 하네... 저 위가 다 그런 곳(...)은 아닐 거고 사무실 포함이겠지?<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_20.jpg" width="1000"><br>
+                    여기 코너 들어올 때 카메라랑 너무 지대로 아이컨텍트 해서 부담스러움.<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_21.jpg" width="1000"><br>
+                    왼쪽 숏컷 안드로이드 얼굴 클로이 생각나는데.....?<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_22_1.jpg" width="495"> <img src="images/12_22_2.jpg" width="495"><br>
+                    마커스 알뜰살뜰하다는 증거: 물에 빠진 외투 찾아와서 말려입음<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_23.jpg" width="1000"><br>
+                    그냥... 변화구를 주고 싶어서 결국 쐈다... 미안해요 덕분에 사이먼은 살았어...<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_24.jpg" width="1000"><br>
+                    표정이 매번 너무 킹받아ㅋㅋㅋㅋ<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_25_1.jpg" width="495"> <img src="images/12_25_2.jpg" width="495"><br>
+                    파괴된 코너가 살아돌아온 걸 처음 봤을 때... 볼 때마다 진짜 가슴 아픈 표정...<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_26.jpg" width="1000"><br>
+                    내가 코너를 움직일 수 있는 상태에서 대화하는 장면이라 그런지 행크 초점이 미묘하게 어긋나있어서 매번 신경쓰인다ㅋㅋㅋ<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_47_1.jpg" width="495"> <img src="images/12_47_2.jpg" width="495"><br>
+                    코너 서있는 위치에 따라 재생될 때 코너 모습이 조금 다르다.<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_27.jpg" width="1000"><br>
+                    실수로 도망가기 눌렀는데, 도망가다가도 희생하기로 전환이 되는구나.<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_28.jpg" width="1000"><br>
+                    아는구나? ಠಿ_ಠ<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_29_1.jpg" width="495"> <img src="images/12_29_2.jpg" width="495"><br>
+                    <img src="images/12_29_3.jpg" width="1000"><br>
+                    행크가 중립적이고 코너가 제리코 키를 갖고 있다면 이래저래 코너가 작별인사를 하고 행크는 짧게 조언을 해준다. 친구면 행크 멘트가 더 길어지는 모양.<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_30.jpg" width="1000"><br>
+                    루터, 카라, 사이먼이 한 자리에<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_31.jpg" width="1000"><br>
+                    카라 머리카락 색상... 취향은 금발이 맞는데 디비휴의 어두운 분위기에는 흑발이 베스트라는 결론.<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_32.jpg" width="1000"><br>
+                    순서도를 위해 당분간 노스 연인 루트를 탈 예정. 사실 연인 루트를 안 타야 플탐이 조금 더 짧아져서 잘 안 하는 편이다.<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_33_1.jpg" width="495"> <img src="images/12_33_2.jpg" width="495"><br>
+                    <img src="images/12_33_3.jpg" width="495"> <img src="images/12_33_4.jpg" width="495"><br>
+                    하 저 쪼고미가 필사적으로 카라 지키는 거 봐ㅜㅠㅜㅜㅠ<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_34.jpg" width="1000"><br>
+                    마커스 돕기 위해 권총 한 자루 쥐고 앞으로 나서는 코너는 매번 멋있다...<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_35_1.jpg" width="495"> <img src="images/12_35_2.jpg" width="495"><br>
+                    아오 새키 쫌만 더 빨리 깨달았어도<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_36.jpg" width="1000"><br>
+                    ㅁㅊㅁㅊ 이거 칼이 다시 걸어놨나봐 ㅠㅜㅜㅠㅜㅠㅜ<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_37.jpg" width="1000"><br>
+                    그날 이후로 이 그림은 못 완성하셨겠지...<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_38.jpg" width="1000"><br>
+                    그런데 칼 할아버지 대화도 어렵다더니 마커스 만나고 생기 도는 거 넘 웃기고 다행임<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_39.jpg" width="1000"><br>
+                    혁명 시작하면 마커스가 '이제 시작이야' 이러고 엔딩이 나는데,<br>
+                    목적이 '평등한 권리 보장을 위한 협상'이었으니 혁명을 성공한 시점에서 또 새로운 시작이 맞네...<br> 
+                    그러니까 디비휴2 내놔아아아악 (｀Д´)<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_40_1.jpg" width="495"> <img src="images/12_40_2.jpg" width="495"><br>
+                    행크와 코너 장면만이 요근래 팍팍한 루트 속 한 줄기 빛이야.. (；人；)<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_41_1.jpg" width="495"> <img src="images/12_42_2.jpg" width="495"><br>
+                    너도나도 카라 도와주겠다고 나서는 거 봐ㅠㅜㅠ<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_42_1.jpg" width="495"> <img src="images/12_42_2.jpg" width="495"><br>
+                    그런데 도와주는 거 멀뚱멀뚱 구경하고 있으면 (당연히...ㅋㅋㅋㅋㅋ) 앨리스에게 갈 기회를 놓친다.<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_43_1.jpg" width="495"> <img src="images/12_43_2.jpg" width="495"><br>
+                    <img src="images/12_43_3.jpg" width="495"> <img src="images/12_43_4.jpg" width="495"><br>
+                    앨리스 만나는 거 도울 때 랄프는 선택지가 없던데, 철조망으로 도망갈 때 도움을 준다. 말하는 거 봐 고맙다 랄프...<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_44_1.jpg" width="495"> <img src="images/12_44_2.jpg" width="495"><br>
+                    <img src="images/12_44_3.jpg" width="1000"><br>
+                    응 하지만 철조망 앞에서 군인한테 져... 그리고 죽어... 뒤에 보면 랄프도 결국 죽어..........<br>
+                    카라 총 맞으니까 앨리스 바로 돌아와서 같이 총 맞는 엔딩이 난다...ㅠ<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_45_1.jpg" width="495"> <img src="images/12_45_2.jpg" width="495"><br>
+                    <img src="images/12_45_3.jpg" width="495"> <img src="images/12_45_4.jpg" width="495"><br>
+                    순서도 덕분에 마커스는 오늘도 혁명에 실패합니다...ㅎ<br>
+                    항복하면 당연히..... 총에 맞는 엔딩이 기다린다.<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <img src="images/12_46.jpg" width="1000"><br>
+                    마커스가 혁명을 실패한다는 것. 코너 자결로 이어진다는 것(.....)<br>
+                    행크는 햄버거 가게 앞에서 코너를 기다릴까...? 아니 뉴스 봤겠지...<br><br>
+
+                    코너 자결 엔딩에서 조금 아쉬운 점. 아만다와 대화(?)한 후 장면들이 확실히 짜집기한 티가 난다.<br>
+                    모르는 입장에서는 상관없는데 다른 스토리(마커스 승리)에서 플레이 되는 스토리를 여기에 필요한 부분만 가져다 쓰다보니 장면 전환이 조금 급작스럽다.<br>
+                    그런데 뭐 당연히 내가 감독이라도 그럴 것.<br><br><br>
+                    <br>
+                    <br>
+                    <br>
+                </p>
+                    
+                <!-- 이전 페이지 버튼 -->
+            <button class="back-btn" onclick="window.location.href='https://rkpop0815.github.io/RK800/dbhposthome.html'">이전 페이지</button>
+        </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; since 20250316</p>
+    </footer>
+
+</html>
